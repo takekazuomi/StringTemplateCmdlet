@@ -1,0 +1,3 @@
+[submodule "antlrcs"]
+	path = antlrcs
+	url = git@github.com:antlr/antlrcs.git
