@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseStTemplate.cs" />
     <Compile Include="ConvertStTemplate.cs" />
     <Compile Include="MapModelAdaptorWrapper.cs" />
     <Compile Include="NewStGroup.cs" />
