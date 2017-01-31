@@ -77,7 +77,7 @@ function Get-AzSshJumpboxConfig {
     begin {
         $config = getSshConfig $ResourceGroupName $Name $IdentityFile
         $localPort=8000
-        $localForward = [list[string]]@()
+        $localForward = [list[hashtable]]@()
     }
     
     Process {
@@ -90,7 +90,7 @@ function Get-AzSshJumpboxConfig {
             # LocalForward 13389 10.92.0.5:3389 # vmname
             $remotePort = ?: {$VM.StorageProfile.OsDisk.OsType -eq "Windows"} {3389} {22}
             $localPort++
-            $localForward.Add("${localPort} ${ipaddress}:${remotePort} #$(${VM}.Name)")
+            $localForward.Add(@{value="${localPort} ${ipaddress}:${remotePort}"; comment="$(${VM}.Name)"})
         }
     }
 

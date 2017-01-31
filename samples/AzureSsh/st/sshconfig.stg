@@ -8,8 +8,7 @@ Host <c.Host>
 >>
 
 properties(prop) ::= <<
-<prop.keys:{k|
-  <prop.(k):{ v |
-	<k> <v>}>
-}>
+<prop.keys:{k|<prop.(k):{ v |<if(v.comment)>  # <v.comment>
+<endif>  <k> <if(v.value)><v.value><else><v><endif>
+}>}>
 >>
