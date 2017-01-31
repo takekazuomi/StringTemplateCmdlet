@@ -58,8 +58,11 @@ namespace StringTemplateCmdlet
                     }
                     else
                     {
-                        Dump(key, param.Value);
-                        _template.Add(key, param.Value);
+                        if (param.Value != null)
+                        {
+                            Dump(key, param.Value);
+                            _template.Add(key, param.Value);
+                        }
                     }
                 }
             }

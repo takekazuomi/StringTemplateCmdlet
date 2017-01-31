@@ -1,5 +1,4 @@
 using namespace System.Collections.Generic;
-using namespace Microsoft.Azure.Commands.Compute.Models;
 
 function getSshConfig {
     [CmdletBinding()]
@@ -69,8 +68,11 @@ function Get-AzSshJumpboxConfig {
         [string]$ResourceGroupName,
         [Parameter(Mandatory=$true)]
         [string]$Name,
+        [Parameter(Mandatory=$true)]
+        [string]$Path,
         [Parameter(ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true, Mandatory=$true)]
-        [PSVirtualMachine]$VM,
+        #[Microsoft.Azure.Commands.Compute.Models.PSVirtualMachine]$VM,
+        [object]$VM,
         [string]$IdentityFile="~/.sshd/id_rsa"
     )
 
@@ -78,6 +80,7 @@ function Get-AzSshJumpboxConfig {
         $config = getSshConfig $ResourceGroupName $Name $IdentityFile
         $localPort=8000
         $localForward = [list[hashtable]]@()
+        $localForwardHost = [list[hashtable]]@()
     }
     
     Process {
@@ -88,15 +91,60 @@ function Get-AzSshJumpboxConfig {
             $ipc = Get-AzureRmResource -ResourceId $ipcId -ApiVersion 2016-12-01 | %{$_.Properties | Select-Object -First 1}
             $ipaddress = $ipc.privateIPAddress
             # LocalForward 13389 10.92.0.5:3389 # vmname
-            $remotePort = ?: {$VM.StorageProfile.OsDisk.OsType -eq "Windows"} {3389} {22}
             $localPort++
+
+            $vmName = $VM.Name
+            $remotePort = ?: {$VM.StorageProfile.OsDisk.OsType -eq "Windows"} {
+                Write-Host $vmName
+                Get-AzSshRemoteDesktopFile -Name $vmName -HostName "localhost" -Port $localPort -Path $Path | Out-Null
+                3389
+            } {
+                # add ssh setting
+                $config = @{
+                    Host = $vmName
+                    Properties = [ordered]@{
+                        HostName = "localhost"
+                        Port = ${localPort}
+                        ServerAliveInterval = 60
+                        UserKnownHostsFile="/dev/null"
+                        StrictHostKeyChecking = "no"
+                        PasswordAuthentication = "no"
+                        IdentityFile = $IdentityFile
+                        LogLevel = "FATAL"
+                    }
+                }
+                $localForwardHost.Add($config)
+                22
+            }
             $localForward.Add(@{value="${localPort} ${ipaddress}:${remotePort}"; comment="$(${VM}.Name)"})
         }
     }
 
     End {
         $config.Properties["LocalForward"]=$localForward 
-        $result = $config | Convert-StTemplate -GroupPath $PSScriptRoot/st/sshconfig.stg -TemplateName host
-        $result
+        $hosts = [list[hashtable]]@()
+        $hosts.Add($config)
+        $hosts.AddRange($localForwardHost)
+
+        $result = $hosts | Convert-StTemplate -GroupPath $PSScriptRoot/st/sshconfig.stg -TemplateName host
+        $result | Out-File -Encoding ascii -FilePath (Join-Path $Path "${Name}_ssh.config") -Force
     }
+}
+
+function Get-AzSshRemoteDesktopFile{
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$Name,
+        [Parameter(Mandatory=$true)]
+        [string]$HostName,
+        [Parameter(Mandatory=$true)]
+        [string]$Port,
+        [Parameter(Mandatory=$true)]
+        [string]$Path
+    )
+
+    $outfile = ?: {$Path -match "\.rdp$"} {$Path} {Join-Path $Path "$Name.rdp"}
+    Write-Host $outfile
+    Convert-StTemplate -GroupPath $PSScriptRoot/st/rdpfile.stg -TemplateName rdpfile -host $HostName -port $Port | Out-File -Encoding ascii -FilePath $outfile -Force
 }

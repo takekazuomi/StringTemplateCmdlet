@@ -6,5 +6,7 @@ Pop-Location
 
 Export-ModuleMember `
     -Function @(
-        'Get-AzSshConfig')
+        'Get-AzSshConfig',
+        'Get-AzSshJumpboxConfig',
+        'Get-AzSshRemoteDesktopFile')
 
