@@ -1,13 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9a8c5448-5fbf-4490-bd73-d8b0d99f5175}</ProjectGuid>
+    <ProjectGuid>{88a1e16f-9f26-499b-afbd-ebe65b546287}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>MyApplication</RootNamespace>
     <AssemblyName>MyApplication</AssemblyName>
-    <Name>PowerShellProject</Name>
+    <Name>AzureSsh</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,20 +26,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\StringTemplateCmdlet\StringTemplateCmdlet.csproj">
+      <Name>StringTemplateCmdlet</Name>
+      <Project>{f8a73675-c6d9-4709-b873-f28605ba1e74}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="azure-ssh.psd1" />
+    <Compile Include="azure-ssh.psm1" />
+    <Compile Include="azure-ssh.ps1" />
+    <Compile Include="st\sshconfig.stg" />
+    <Compile Include="SshConfig.ps1" />
+    <Compile Include="Utils.ps1" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="st\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ShhConfig.Tests.ps1" />
-    <Compile Include="Convert-StTemplate.Tests.ps1" />
-    <Compile Include="st\message.st" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="st\mygroup.stg" />
-    <Content Include="st\sshconfig.stg" />
-    <Content Include="st\groupfiletest.stg" />
-    <Content Include="st\helloworld.st" />
-    <Content Include="st\addresslist.st" />
-    <Content Include="st\namelist.st" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

@@ -42,6 +42,7 @@ namespace StringTemplateCmdlet
                 _template = new Template(TemplateString, DelimiterStartChar, DelimiterStopChar);
 
             _template.Group.RegisterModelAdaptor(typeof(PSObject), new PSObjectModelAdaptor {WriteVerbose = WriteVerbose});
+            _template.Group.RegisterRenderer(typeof(string), new StringRenderer());
 
             if (_runtimeDefinedParameterDictionary != null)
             {
@@ -83,7 +84,7 @@ namespace StringTemplateCmdlet
             sb.AppendLine(
                 e != null ?
                 string.Join(", ", e.Cast<object>().Select(o => o.GetType().Name)) : 
-                data.GetType().Name);
+                data?.GetType().Name);
             WriteVerbose(sb.ToString().TrimEnd(',', ' '));
         }
     }

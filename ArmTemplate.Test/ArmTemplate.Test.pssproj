@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9a8c5448-5fbf-4490-bd73-d8b0d99f5175}</ProjectGuid>
+    <ProjectGuid>6CAFC0C6-A428-4d30-A9F9-700E829FEA51</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>MyApplication</RootNamespace>
     <AssemblyName>MyApplication</AssemblyName>
-    <Name>PowerShellProject</Name>
+    <Name>ArmTemplate.Test</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,21 +26,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="st\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ShhConfig.Tests.ps1" />
-    <Compile Include="Convert-StTemplate.Tests.ps1" />
-    <Compile Include="st\message.st" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="st\mygroup.stg" />
-    <Content Include="st\sshconfig.stg" />
-    <Content Include="st\groupfiletest.stg" />
-    <Content Include="st\helloworld.st" />
-    <Content Include="st\addresslist.st" />
-    <Content Include="st\namelist.st" />
+    <Compile Include="ArmTemplate.Test.psd1" />
+    <Compile Include="ArmTemplate.Test.psm1" />
+    <Compile Include="ArmTemplate.Test.tests.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

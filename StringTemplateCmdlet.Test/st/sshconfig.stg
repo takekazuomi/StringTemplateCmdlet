@@ -1,0 +1,15 @@
+﻿group sshconfig;
+
+host(config) ::= <<
+<config:{c|
+Host <c.Host>
+  <properties(c.Properties)>
+}>
+>>
+
+properties(prop) ::= <<
+<prop.keys:{k|
+  <k> <prop.(k)>
+}>
+>>
+

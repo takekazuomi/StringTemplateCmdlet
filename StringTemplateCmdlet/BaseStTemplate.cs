@@ -54,7 +54,7 @@ namespace StringTemplateCmdlet
 
                     _template = templateGroup.GetInstanceOf(TemplateName);
                     var paramDictionary = new RuntimeDefinedParameterDictionary();
-                    var attr = _template.GetAttributes();
+                    var attr = _template?.GetAttributes();
                     if (attr != null)
                     {
                         var m = string.Format("top level attributes: {0}", string.Join(", ", attr.Keys));

@@ -1,0 +1,17 @@
+﻿group mygroup;
+
+sometmp(arg1) ::= <<
+Here is arg1: <arg1>
+>>
+
+host(config) ::= <<
+<config:{c|
+Host <c.Host>
+  properties(c.Pro)
+}
+>>
+
+properties(prop) ::= <<
+<prop.keys:{k|
+  <k> <prop.(k)>
+>>

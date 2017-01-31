@@ -37,6 +37,7 @@
       <HintPath>..\packages\System.Management.Automation.6.1.7601.17515\lib\net45\System.Management.Automation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,6 +48,7 @@
   <ItemGroup>
     <Compile Include="BaseStTemplate.cs" />
     <Compile Include="ConvertStTemplate.cs" />
+    <Compile Include="JsonValueRenderer.cs" />
     <Compile Include="MapModelAdaptorWrapper.cs" />
     <Compile Include="NewStGroup.cs" />
     <Compile Include="NewStTemplate.cs" />
@@ -67,4 +69,8 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy *.dll $(ProjectDir)\..\samples\AzureSsh\$(OutDir)
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>
