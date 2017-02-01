@@ -148,3 +148,29 @@ function Get-AzSshRemoteDesktopFile{
     Write-Host $outfile
     Convert-StTemplate -GroupPath $PSScriptRoot/st/rdpfile.stg -TemplateName rdpfile -host $HostName -port $Port | Out-File -Encoding ascii -FilePath $outfile -Force
 }
+
+# install your public key in a remote machine's authorized_keys
+function Copy-SshId {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Position=0,Mandatory=$true)]
+        [string]$HostName,
+        [Parameter(Position=1,Mandatory=$true)]
+        [string]$User,
+        [Parameter(Position=2, HelpMessage="your public key")]
+        [string]$IdentityFile
+    )
+
+    $IdentityFile = ?? {$IdentityFile} { join-path (split-path (Get-SshPath) -Parent) "id_rsa.pub"}
+    $id = (Get-Content -Raw $IdentityFile) -replace "`n", ""
+    Write-Verbose $IdentityFile
+    $copycmd =
+@"
+install -m 700 -d ~/.ssh
+echo `"$id`" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+"@ -replace "`r", ""
+
+    Write-Host $copycmd
+    ssh $User@$HostName $copycmd
+}

@@ -8,5 +8,6 @@ Export-ModuleMember `
     -Function @(
         'Get-AzSshConfig',
         'Get-AzSshJumpboxConfig',
-        'Get-AzSshRemoteDesktopFile')
+        'Get-AzSshRemoteDesktopFile',
+        'Copy-SshId')
 
