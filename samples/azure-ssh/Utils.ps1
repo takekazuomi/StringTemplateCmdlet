@@ -23,7 +23,7 @@ function Invoke-NullCoalescing {
     $result
 }
 
-Set-Alias ?? Invoke-NullCoalescing -Force
+Set-Alias ?? Invoke-NullCoalescing -Option AllScope -Description "PSCX filter alias"
 
 function Invoke-Utf8ConsoleCommand([ScriptBlock]$cmd) {
     $currentEncoding = [Console]::OutputEncoding

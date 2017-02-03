@@ -48,7 +48,7 @@
   <ItemGroup>
     <Compile Include="BaseStTemplate.cs" />
     <Compile Include="ConvertStTemplate.cs" />
-    <Compile Include="JsonValueRenderer.cs" />
+    <Compile Include="JsonRenderer.cs" />
     <Compile Include="MapModelAdaptorWrapper.cs" />
     <Compile Include="NewStGroup.cs" />
     <Compile Include="NewStTemplate.cs" />
@@ -70,7 +70,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy *.dll $(ProjectDir)\..\samples\AzureSsh\$(OutDir)
+    <PostBuildEvent>xcopy *.dll $(ProjectDir)\..\samples\azure-ssh\$(OutDir) /y
+xcopy *.pdb $(ProjectDir)\..\samples\azure-ssh\$(OutDir) /y
+
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

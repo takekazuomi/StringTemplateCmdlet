@@ -30,16 +30,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System.Runtime.Serialization;
+using System.Security;
+using System.Text;
 using System.Web;
 using Antlr4.StringTemplate;
 using CultureInfo = System.Globalization.CultureInfo;
 
 namespace StringTemplateCmdlet
 {
-    public class JsonValueRenderer : IAttributeRenderer
+    public sealed class JsonRenderer : IAttributeRenderer
     {
         // trim(s) and strlen(s) built-in funcs; these are Format options
-        public virtual string ToString(object o, string formatString, CultureInfo culture)
+        public string ToString(object o, string formatString, CultureInfo culture)
+        {
+            string s = (string)o;
+            if (formatString == null)
+                return s;
+
+            if (formatString.Equals("upper"))
+                return culture.TextInfo.ToUpper(s);
+
+            if (formatString.Equals("lower"))
+                return culture.TextInfo.ToLower(s);
+
+            if (formatString.Equals("cap"))
+                return s.Length > 0 ? culture.TextInfo.ToUpper(s[0]) + s.Substring(1) : s;
+
+            if (formatString.Equals("json-encode"))
+                return JsonToString(o, formatString);
+
+            if (formatString.Equals("url-encode"))
+                return HttpUtility.UrlEncode(s, Encoding.UTF8);
+
+            if (formatString.Equals("xml-encode"))
+            {
+                return SecurityElement.Escape(s);
+            }
+
+            return string.Format(culture, formatString, s);
+        }
+
+        private string JsonToString(object o, string formatString)
         {
             string v;
 
@@ -47,11 +79,8 @@ namespace StringTemplateCmdlet
                 v = (bool)o ? "true" : "false";
             else if (o is int || o is long)
                 v = o.ToString();
-            else if (formatString != null && formatString.Equals("json-quote"))
-                v = HttpUtility.JavaScriptStringEncode(o.ToString(),true);
-            else
-                v = o.ToString();
-
+            else 
+                v = HttpUtility.JavaScriptStringEncode(o.ToString(), true);
             return v;
         }
     }

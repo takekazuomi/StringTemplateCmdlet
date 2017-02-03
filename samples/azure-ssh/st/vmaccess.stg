@@ -1,0 +1,37 @@
+﻿group vmaccess;
+
+vmaccess(config) ::= <<
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": <config.name;format="json-encode">,
+      "apiVersion": <config.apiVersion;format="json-encode">,
+      "location": <config.location;format="json-encode">,
+      "properties": {
+        "publisher": <config.publisher;format="json-encode">,
+        "type": <config.type;format="json-encode">,
+        "typeHandlerVersion": <config.typeHandlerVersion;format="json-encode">,
+        "autoUpgradeMinorVersion": <config.autoUpgradeMinorVersion;format="json-encode">,
+        "settings":  {<config.settings.keys:{k|
+          <k;format="json-encode">: <config.protectedSettings.(k);format="json-encode">};separator=",">
+        },
+        "protectedSettings": {<config.protectedSettings.keys:{k|
+          <k;format="json-encode">: <config.protectedSettings.(k);format="json-encode">};separator=",">
+        }
+      }
+    }]
+}
+>>
+
+
+debug(config) ::= <<
+{
+  "autoUpgradeMinorVersion": <config.autoUpgradeMinorVersion;format="json-encode">
+}
+>>

@@ -19,6 +19,18 @@ namespace StringTemplateModule
             var pso = obj as PSObject;
             if (pso != null)
             {
+                foreach (var psmi in pso.Members)
+                {
+
+                }
+                foreach (var pspi in pso.Properties)
+                {
+                    WriteVerbose?.Invoke(string.Format("dump properties MemberType:{0}, TypeNameOfValue: {1}, Name:{2}, IsGettable:{3}", pspi.MemberType, pspi.TypeNameOfValue, pspi.Name, pspi.IsGettable));
+                }
+                var pi = pso.Properties[propertyName];
+
+                WriteVerbose?.Invoke(pi != null ? string.Format("propertyName: {0}, name: {1}, MemberType: {2}, IsGettable:{3}, TypeNameOfValue: {4}", propertyName, pi?.Name, pi?.MemberType, pi?.IsGettable, pi?.TypeNameOfValue) : string.Format("propertyName: {0}", propertyName));
+
                 var value = pso.Properties[propertyName]?.Value;
                 if (value == null)
                 {

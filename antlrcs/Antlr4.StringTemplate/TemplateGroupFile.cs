@@ -30,6 +30,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using Antlr.Runtime.Misc;
+
 namespace Antlr4.StringTemplate
 {
     using System.Linq;
@@ -93,7 +95,7 @@ namespace Antlr4.StringTemplate
                 this._fileName = fileName;
 
                 if (Verbose)
-                    Console.WriteLine("STGroupFile({0}) == file {1}", fileName, Path.GetFullPath(fileName));
+                    Logger(string.Format("STGroupFile({0}) == file {1}", fileName, Path.GetFullPath(fileName)));
             }
             catch (Exception e)
             {
@@ -172,12 +174,12 @@ namespace Antlr4.StringTemplate
             _alreadyLoaded = true;
 
             if (Verbose)
-                Console.WriteLine("loading group file " + _url.LocalPath);
+                Logger("loading group file " + _url.LocalPath);
 
             LoadGroupFile("/", _url.LocalPath);
 
             if (Verbose)
-                Console.WriteLine("found {0} templates in {1} = {2}", CompiledTemplates.Count, _url.ToString(), CompiledTemplates);
+                Logger(string.Format("found {0} templates in {1} = {2}", CompiledTemplates.Count, _url.ToString(), CompiledTemplates));
         }
 
         public override string Show()

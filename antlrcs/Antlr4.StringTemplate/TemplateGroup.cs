@@ -148,6 +148,8 @@ namespace Antlr4.StringTemplate
         /** Watch loading of groups and templates */
         private bool _verbose = false;
 
+        public System.Action<string> Logger { get; set; } = ConsoleLogger;
+
         private bool _enableCache = false;
 
         /** For debugging with STViz. Records where in code an ST was created
@@ -337,7 +339,7 @@ namespace Antlr4.StringTemplate
                 name = "/" + name;
 
             if (Verbose)
-                Console.WriteLine(string.Format("{0}.GetInstanceOf({1})", Name, name));
+                Logger(string.Format("{0}.GetInstanceOf({1})", Name, name));
 
             CompiledTemplate c = LookupTemplate(name);
             if (c != null)
@@ -353,7 +355,7 @@ namespace Antlr4.StringTemplate
                 fullyQualifiedName = frame.Template.impl.Prefix + name;
 
             if (Verbose)
-                Console.WriteLine(string.Format("getEmbeddedInstanceOf({0})", fullyQualifiedName));
+                Logger(string.Format("getEmbeddedInstanceOf({0})", fullyQualifiedName));
 
             Template st = GetInstanceOf(fullyQualifiedName);
             if (st == null)
@@ -409,14 +411,14 @@ namespace Antlr4.StringTemplate
                 name = "/" + name;
 
             if (Verbose)
-                Console.WriteLine(string.Format("{0}.LookupTemplate({1})", Name, name));
+                Logger(string.Format("{0}.LookupTemplate({1})", Name, name));
 
             CompiledTemplate code;
             templates.TryGetValue(name, out code);
             if (code == NotFoundTemplate)
             {
                 if (Verbose)
-                    Console.WriteLine(string.Format("{0} previously seen as not found", name));
+                    Logger(string.Format("{0} previously seen as not found", name));
 
                 return null;
             }
@@ -431,13 +433,13 @@ namespace Antlr4.StringTemplate
             if (code == null)
             {
                 if (Verbose)
-                    Console.WriteLine(string.Format("{0} recorded not found", name));
+                    Logger(string.Format("{0} recorded not found", name));
 
                 templates[name] = NotFoundTemplate;
             }
 
             if (Verbose && code != null)
-                Console.WriteLine(string.Format("{0}.LookupTemplate({1}) found", Name, name));
+                Logger(string.Format("{0}.LookupTemplate({1}) found", Name, name));
 
             return code;
         }
@@ -484,20 +486,20 @@ namespace Antlr4.StringTemplate
             foreach (TemplateGroup g in _imports)
             {
                 if (Verbose)
-                    Console.WriteLine(string.Format("checking {0} for imported {1}", g.Name, name));
+                    Logger(string.Format("checking {0} for imported {1}", g.Name, name));
 
                 CompiledTemplate code = g.LookupTemplate(name);
                 if (code != null)
                 {
                     if (Verbose)
-                        Console.WriteLine(string.Format("{0}.LookupImportedTemplate({1}) found", g.Name, name));
+                        Logger(string.Format("{0}.LookupImportedTemplate({1}) found", g.Name, name));
 
                     return code;
                 }
             }
 
             if (Verbose)
-                Console.WriteLine(string.Format("{0} not found in {1} imports", name, Name));
+                Logger(string.Format("{0} not found in {1} imports", name, Name));
 
             return null;
         }
@@ -560,7 +562,7 @@ namespace Antlr4.StringTemplate
                                          IToken templateToken)
         {
             if (Verbose)
-                Console.WriteLine(string.Format("DefineTemplate({0})", fullyQualifiedTemplateName));
+                Logger(string.Format("DefineTemplate({0})", fullyQualifiedTemplateName));
 
             if (fullyQualifiedTemplateName == null)
                 throw new ArgumentNullException("fullyQualifiedTemplateName");
@@ -834,7 +836,7 @@ namespace Antlr4.StringTemplate
             string fileName = fileNameToken.Text;
 
             if (Verbose)
-                Console.WriteLine("ImportTemplates({0})", fileName);
+                Logger(string.Format("ImportTemplates({0})", fileName));
 
             // do nothing upon syntax error
             if (fileName == null || fileName.Equals("<missing STRING>"))
@@ -939,8 +941,8 @@ namespace Antlr4.StringTemplate
         {
             if (Verbose)
             {
-                Console.Out.WriteLine("{0}.LoadGroupFile(prefix={1}, fileName={2})",
-                    GetType().FullName, prefix, fileName);
+                Logger(string.Format("{0}.LoadGroupFile(prefix={1}, fileName={2})",
+                    GetType().FullName, prefix, fileName));
             }
 
             GroupParser parser = null;
@@ -1943,6 +1945,11 @@ namespace Antlr4.StringTemplate
             }
 
             return result;
+        }
+
+        private static void ConsoleLogger(string message)
+        {
+            Console.WriteLine(message);
         }
     }
 }

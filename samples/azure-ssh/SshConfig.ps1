@@ -171,6 +171,6 @@ echo `"$id`" >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 "@ -replace "`r", ""
 
-    Write-Host $copycmd
+    Write-Verbose $copycmd
     ssh $User@$HostName $copycmd
 }

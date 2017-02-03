@@ -39,7 +39,8 @@ namespace StringTemplateCmdlet
 
         public virtual  object GetDynamicParameters()
         {
-            isVerbose = MyInvocation.BoundParameters.ContainsKey("Verbose");
+            isVerbose = MyInvocation.BoundParameters.ContainsKey("Verbose") &&
+                        ((SwitchParameter) MyInvocation.BoundParameters["Verbose"]).ToBool();
 
             try
             {
@@ -48,9 +49,17 @@ namespace StringTemplateCmdlet
                     var path = System.IO.Path.GetFullPath(GroupPath);
                     TemplateGroup templateGroup;
                     if (path.EndsWith(TemplateGroup.GroupFileExtension, StringComparison.InvariantCultureIgnoreCase))
-                        templateGroup = new TemplateGroupFile(path, Encoding.UTF8, DelimiterStartChar, DelimiterStopChar) {Verbose = isVerbose};
+                    templateGroup = new TemplateGroupFile(path, Encoding.UTF8, DelimiterStartChar, DelimiterStopChar)
+                    {
+                        Verbose = isVerbose,
+                        Logger = Host.UI.WriteVerboseLine
+                    };
                     else
-                        templateGroup = new TemplateGroupDirectory(path, Encoding.UTF8, DelimiterStartChar, DelimiterStopChar) {Verbose = isVerbose};
+                        templateGroup = new TemplateGroupDirectory(path, Encoding.UTF8, DelimiterStartChar, DelimiterStopChar)
+                        {
+                            Verbose = isVerbose,
+                            Logger = Host.UI.WriteVerboseLine
+                        };
 
                     _template = templateGroup.GetInstanceOf(TemplateName);
                     var paramDictionary = new RuntimeDefinedParameterDictionary();

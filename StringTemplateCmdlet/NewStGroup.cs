@@ -28,7 +28,11 @@ namespace StringTemplateModule
 
         protected override void EndProcessing()
         {
-            var template = new TemplateGroupDirectory(System.IO.Path.GetFullPath(Path), Encoding.UTF8, DelimiterStartChar, DelimiterStopChar) {Verbose = false};
+            var template = new TemplateGroupDirectory(System.IO.Path.GetFullPath(Path), Encoding.UTF8, DelimiterStartChar, DelimiterStopChar)
+            {
+                Verbose = false,
+                Logger = Host.UI.WriteVerboseLine
+            };
             WriteObject(template);
         }
     }

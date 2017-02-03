@@ -15,7 +15,7 @@ Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "simplelinux", "samples\simp
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "ArmTemplate.Test", "ArmTemplate.Test\ArmTemplate.Test.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject
-Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "AzureSsh", "samples\AzureSsh\AzureSsh.pssproj", "{88A1E16F-9F26-499B-AFBD-EBE65B546287}"
+Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "azure-ssh", "samples\azure-ssh\azure-ssh.pssproj", "{88A1E16F-9F26-499B-AFBD-EBE65B546287}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -97,7 +97,7 @@ namespace Antlr4.StringTemplate
                 }
 
                 if (Verbose)
-                    Console.WriteLine("TemplateGroupDirectory({0}) found at {1}", dirName, root);
+                    Logger(string.Format("TemplateGroupDirectory({0}) found at {1}", dirName, root));
             }
             catch (Exception e)
             {
@@ -147,7 +147,7 @@ namespace Antlr4.StringTemplate
         protected override CompiledTemplate Load(string name)
         {
             if (Verbose)
-                Console.WriteLine("STGroupDir.load(" + name + ")");
+                Logger("STGroupDir.load(" + name + ")");
 
             string parent = Utility.GetParent(name); // must have parent; it's fully-qualified
             string prefix = Utility.GetPrefix(name);
@@ -217,7 +217,7 @@ namespace Antlr4.StringTemplate
                 throw new ArgumentException();
 
             if (Verbose)
-                Console.WriteLine("loadTemplateFile({0}) in groupdir from {1} prefix={2}", unqualifiedFileName, root, prefix);
+                Logger(string.Format("loadTemplateFile({0}) in groupdir from {1} prefix={2}", unqualifiedFileName, root, prefix));
 
             string templateName = Path.ChangeExtension(unqualifiedFileName, null);
             Uri f;
@@ -240,7 +240,7 @@ namespace Antlr4.StringTemplate
             catch (IOException)
             {
                 if (Verbose)
-                    Console.WriteLine("{0}/{1} doesn't exist", root, unqualifiedFileName);
+                    Logger(string.Format("{0}/{1} doesn't exist", root, unqualifiedFileName));
 
                 //errMgr.IOError(null, ErrorType.NO_SUCH_TEMPLATE, ioe, unqualifiedFileName);
                 return null;

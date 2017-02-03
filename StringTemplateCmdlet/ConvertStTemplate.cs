@@ -42,7 +42,8 @@ namespace StringTemplateCmdlet
                 _template = new Template(TemplateString, DelimiterStartChar, DelimiterStopChar);
 
             _template.Group.RegisterModelAdaptor(typeof(PSObject), new PSObjectModelAdaptor {WriteVerbose = WriteVerbose});
-            _template.Group.RegisterRenderer(typeof(string), new StringRenderer());
+            _template.Group.RegisterRenderer(typeof(string), new JsonRenderer());
+//            _template.Group.RegisterRenderer(typeof(bool), new JsonRenderer());
 
             if (_runtimeDefinedParameterDictionary != null)
             {
