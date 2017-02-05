@@ -1,4 +1,3 @@
-
 Push-Location $PSScriptRoot
 . .\Utils.ps1
 . .\SshConfig.ps1
@@ -11,6 +10,6 @@ Export-ModuleMember `
         'Get-AzSshJumpboxConfig',
         'Get-AzSshRemoteDesktopFile',
         'Copy-SshId',
-        'Set-AzVMResetPassword'
-        )
+        'Set-AzVMUserCredentials'
+    )
 
