@@ -99,10 +99,7 @@ function Remove-AzVMUser {
         $verbose = ?? $PSBoundParameters.Verbose $false
     }
 
-    process{
-    }
-
-    end{
+    process {
         $config = buildConfig $VMName
         $config.protectedSettings.Add("remove_user", $UserName)
 
@@ -111,8 +108,132 @@ function Remove-AzVMUser {
 
         deployResourceGroupDeployment $ResourceGroupName $VMName $result -ValidationOnly:$ValidationOnly -Verbose:$verbose
     }
+
+    end{
+    }
 }
 
+function Reset-AzVMSshConfig {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$ResourceGroupName,
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [string]$VMName,
+        [switch]$ValidationOnly=$false
+    )
+
+    begin {
+        $verbose = ?? $PSBoundParameters.Verbose $false
+    }
+
+    process {
+        $config = buildConfig $VMName
+        $config.protectedSettings.Add("reset_ssh", $true)
+
+        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/vmaccess.stg -TemplateName vmaccess -config $config -Verbose:$verbose 
+        Write-Verbose $result -Verbose:$verbose
+
+        deployResourceGroupDeployment $ResourceGroupName $VMName $result -ValidationOnly:$ValidationOnly -Verbose:$verbose
+   }
+
+    end {
+    }
+}
+
+
+function Reset-AzVMSshConfig {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$ResourceGroupName,
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [string]$VMName,
+        [switch]$ValidationOnly=$false
+    )
+
+    begin {
+        $verbose = ?? $PSBoundParameters.Verbose $false
+    }
+
+    process {
+        $config = buildConfig $VMName
+        $config.protectedSettings.Add("reset_ssh", $true)
+
+        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/vmaccess.stg -TemplateName vmaccess -config $config -Verbose:$verbose 
+        Write-Verbose $result -Verbose:$verbose
+
+        deployResourceGroupDeployment $ResourceGroupName $VMName $result -ValidationOnly:$ValidationOnly -Verbose:$verbose
+   }
+
+    end {
+    }
+}
+
+function Check-AzVMDisk {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$ResourceGroupName,
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [string]$VMName,
+        [switch]$ValidationOnly=$false
+    )
+
+    begin {
+        $verbose = ?? $PSBoundParameters.Verbose $false
+    }
+
+    process {
+        # check_disk and repair_disk looks  is readed from public_settings
+        # https://github.com/takekazuomi/azure-linux-extensions/blob/master/VMAccess/vmaccess.py#L405
+        # missing information in following link
+        # https://github.com/Azure/azure-linux-extensions/tree/master/VMAccess#23-using-arm-template 
+
+        $config = buildConfig $VMName
+        $config.protectedSettings.Add("check_disk", $true)
+
+        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/vmaccess.stg -TemplateName vmaccess -config $config -Verbose:$verbose 
+        Write-Verbose $result -Verbose:$verbose
+
+        deployResourceGroupDeployment $ResourceGroupName $VMName $result -ValidationOnly:$ValidationOnly -Verbose:$verbose
+   }
+
+    end {
+    }
+}
+
+function Repair-AzVMDisk {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$ResourceGroupName,
+        [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+        [string]$VMName,
+        [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+        [string]$DiskName,
+        [switch]$ValidationOnly=$false
+    )
+
+    begin {
+        $verbose = ?? $PSBoundParameters.Verbose $false
+    }
+
+    process {
+        $config = buildConfig $VMName
+        # repair_disk can only specify one disk. may be fix boot disk and repair other disk after boot it.
+        $config.protectedSettings.Add("repair_disk", $true)
+        $config.protectedSettings.Add("disk_name", $DiskName)
+
+        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/vmaccess.stg -TemplateName vmaccess -config $config -Verbose:$verbose 
+        Write-Verbose $result -Verbose:$verbose
+
+        deployResourceGroupDeployment $ResourceGroupName $VMName $result -ValidationOnly:$ValidationOnly -Verbose:$verbose
+    }
+
+    end {
+    }
+}
 
 <#
 VMAccess Extension 2.3. Using ARM Template
