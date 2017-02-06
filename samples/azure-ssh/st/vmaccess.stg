@@ -8,28 +8,31 @@ vmaccess(config) ::= <<
 
   },
   "variables": {},
-  "resources": [
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": <config.name;format="json-encode">,
-      "apiVersion": <config.apiVersion;format="json-encode">,
-      "location": <config.location;format="json-encode">,
-      "properties": {
-        "publisher": <config.publisher;format="json-encode">,
-        "type": <config.type;format="json-encode">,
-        "typeHandlerVersion": <config.typeHandlerVersion;format="json-encode">,
-        "autoUpgradeMinorVersion": <config.autoUpgradeMinorVersion;format="json-encode">,
-        "settings":  {<config.settings.keys:{k|
-          <k;format="json-encode">: <config.protectedSettings.(k);format="json-encode">};separator=",">
-        },
-        "protectedSettings": {<config.protectedSettings.keys:{k|
-          <k;format="json-encode">: <config.protectedSettings.(k);format="json-encode">};separator=",">
-        }
+  "resources": [{
+    "type": "Microsoft.Compute/virtualMachines/extensions",
+    "name": <config.name;format="json-encode">,
+    "apiVersion": <config.apiVersion;format="json-encode">,
+    "location": <config.location;format="json-encode">,
+    "properties": {
+      "publisher": <config.publisher;format="json-encode">,
+      "type": <config.type;format="json-encode">,
+      "typeHandlerVersion": <config.typeHandlerVersion;format="json-encode">,
+      "autoUpgradeMinorVersion": <config.autoUpgradeMinorVersion;format="json-encode">,
+      "settings":  {
+        <settings(config.settings)>
+      },
+      "protectedSettings": {
+        <settings(config.protectedSettings)>
       }
-    }]
+    }
+  }]
 }
 >>
 
+settings(settings) ::= <<
+<settings.keys:{k|
+<settings.(k):{v|<k;format="json-encode">: <v;format="json-encode">};separator=",">};separator=",">
+>>
 
 debug(config) ::= <<
 {

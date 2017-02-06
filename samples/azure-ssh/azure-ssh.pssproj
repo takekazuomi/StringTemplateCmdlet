@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="st\vmaccess.stg" />
-    <Content Include="temp.json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

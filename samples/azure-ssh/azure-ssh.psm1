@@ -10,6 +10,7 @@ Export-ModuleMember `
         'Get-AzSshJumpboxConfig',
         'Get-AzSshRemoteDesktopFile',
         'Copy-SshId',
-        'Set-AzVMUserCredentials'
+        'Set-AzVMUserCredentials',
+        'Remove-AzVMUser'
     )
 

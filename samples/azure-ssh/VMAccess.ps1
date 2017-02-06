@@ -1,3 +1,5 @@
+using namespace System.Collections.Generic;
+
 function deployResourceGroupDeployment {
     [CmdletBinding()]
     Param(
@@ -28,24 +30,11 @@ function deployResourceGroupDeployment {
     }
 }
 
-function Set-AzVMUserCredentials {
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory=$true)]
-        [string]$ResourceGroupName,
-        [Parameter(Mandatory=$true)]
-        [string]$VMName,
-        [Parameter(Mandatory=$true)]
-        [string]$UserName,
-        [string]$Password,
-        [string]$SshKey,
-        [datetime]$Expiration,
-        [switch]$ValidationOnly=$false
+function buildConfig {
+    param(
+        [string]$VMName
     )
-    $verbose = ?? $PSBoundParameters.Verbose $false
-
-    if(!$Password -and !$Sshkey) {Write-Error -Message "Either -Password or -SshKey is mandatory"}
-    $config = [ordered]@{
+    [ordered]@{
         name = "$VMName/enablevmaccess"
         apiVersion = "2016-03-30"
         location = "[resourceGroup().location]"
@@ -53,10 +42,37 @@ function Set-AzVMUserCredentials {
         type = "VMAccessForLinux"
         typeHandlerVersion= "1.4"
         autoUpgradeMinorVersion = $true
+        settings = [ordered]@{
+        }
         protectedSettings = [ordered]@{
-            username = $UserName
         }
     }
+}
+
+function Set-AzVMUserCredentials {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$ResourceGroupName,
+        [Parameter(Mandatory=$true)]
+        [string]$VMName,
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [string]$UserName,
+        [Parameter(ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [string]$Password,
+        [Parameter(ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [string]$SshKey,
+        [Parameter(ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [datetime]$Expiration,
+        [switch]$ValidationOnly=$false
+    )
+    $verbose = ?? $PSBoundParameters.Verbose $false
+
+    if(!$Password -and !$Sshkey) {Write-Error -Message "Either -Password or -SshKey is mandatory"}
+
+    $config = buildConfig $VMName
+
+    if ($UserName) {$config.protectedSettings.Add("username", $UserName)}
     if ($Password) {$config.protectedSettings.Add("password", $Password)}
     if ($Sshkey) {$config.protectedSettings.Add("ssh_key", $Sshkey)}
     if ($Expiration) {$config.protectedSettings.Add("expiration", $Expiration)}
@@ -74,30 +90,27 @@ function Remove-AzVMUser {
         [string]$ResourceGroupName,
         [Parameter(Mandatory=$true)]
         [string]$VMName,
-        [Parameter(Mandatory=$true)]
-        [string]$UserName,
-        [switch]$ValidationOnly=$false
+        [switch]$ValidationOnly=$false,
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [string]$UserName
     )
-    $verbose = ?? $PSBoundParameters.Verbose $false
 
-    if(!$Password -and !$Sshkey) {Write-Error -Message "Either -Password or -SshKey is mandatory"}
-    $config = [ordered]@{
-        name = "$VMName/enablevmaccess"
-        apiVersion = "2016-03-30"
-        location = "[resourceGroup().location]"
-        publisher = "Microsoft.OSTCExtensions"
-        type = "VMAccessForLinux"
-        typeHandlerVersion= "1.4"
-        autoUpgradeMinorVersion = $true
-        protectedSettings = [ordered]@{
-            username = $UserName
-        }
+    begin {
+        $verbose = ?? $PSBoundParameters.Verbose $false
     }
 
-    $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/vmaccess.stg -TemplateName vmaccess -config $config -Verbose:$verbose 
-    Write-Verbose $result -Verbose:$verbose
+    process{
+    }
 
-    deployResourceGroupDeployment $ResourceGroupName $VMName $result -ValidationOnly:$ValidationOnly -Verbose:$verbose
+    end{
+        $config = buildConfig $VMName
+        $config.protectedSettings.Add("remove_user", $UserName)
+
+        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/vmaccess.stg -TemplateName vmaccess -config $config -Verbose:$verbose 
+        Write-Verbose $result -Verbose:$verbose
+
+        deployResourceGroupDeployment $ResourceGroupName $VMName $result -ValidationOnly:$ValidationOnly -Verbose:$verbose
+    }
 }
 
 
