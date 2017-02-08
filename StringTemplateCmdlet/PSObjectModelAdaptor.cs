@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Management.Automation;
 using Antlr4.StringTemplate;
 using Antlr4.StringTemplate.Misc;
@@ -34,7 +35,8 @@ namespace StringTemplateModule
                 var value = pso.Properties[propertyName]?.Value;
                 if (value == null)
                 {
-                    return base.GetProperty(interpreter, frame, pso.BaseObject, property, propertyName);
+                    var adap = frame.Template.Group.GetModelAdaptor(pso.BaseObject.GetType());
+                    return adap.GetProperty(interpreter, frame, pso.BaseObject, property, propertyName);
                 }
                 return value;
             }

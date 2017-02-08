@@ -12,9 +12,9 @@ namespace StringTemplateCmdlet
     {
         protected override void EndProcessing()
         {
-            if(_template == null)
-                _template = new Template(TemplateString, DelimiterStartChar, DelimiterStopChar);
-            WriteObject(_template);
+            if(Template == null)
+                Template = new Template(TemplateString, DelimiterStartChar, DelimiterStopChar);
+            WriteObject(Template);
         }
     }
 }

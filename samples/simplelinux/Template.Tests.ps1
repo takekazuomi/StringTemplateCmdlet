@@ -20,13 +20,6 @@ Describe "arm template parameters module" {
         Write-Host "result:" $result
     }
 
-    It "debug" {
-        $parameters = [ordered]@{yype="string"}
-        $result = $parameters | Convert-StTemplate -GroupPath $PSScriptRoot/st/parameters.stg -TemplateName debug -Verbose
-        Write-Host "result:" $result
- 
-    }
-
     It "simple many" {
 
     }
@@ -44,11 +37,27 @@ Describe "arm template parameters module" {
     }
 }
 
-Describe "debug" {
+Describe "debugByPipe" {
     It "debug type" {
-        $parameters = @{type="string"}
+        $parameters = [PSCustomObject]@{type="hello st"}
         $result = $parameters | Convert-StTemplate -GroupPath $PSScriptRoot/st/parameters.stg -TemplateName debug -Verbose
-#        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/parameters.stg -TemplateName debug  -parameters $parameters -Verbose
         Write-Host "result:" $result
     }
 }
+
+Describe "debugByParam" {
+    It "debug type" {
+        $parameters = [PSCustomObject]@{type="hello st"}
+        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/parameters.stg -TemplateName debug  -parameters $parameters -Verbose
+        Write-Host "result:" $result
+    }
+}
+
+Describe "debugHashByPipe" {
+    It "debug type" {
+        $parameters = [ordered]@{type="hello st"}
+        $result = $parameters | Convert-StTemplate -GroupPath $PSScriptRoot/st/parameters.stg -TemplateName debug -Verbose
+        Write-Host "result:" $result
+    }
+}
+

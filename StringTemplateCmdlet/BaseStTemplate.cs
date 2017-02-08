@@ -32,14 +32,14 @@ namespace StringTemplateCmdlet
         public char DelimiterStopChar { get; set; } = '>';
 
 
-        protected Template _template;
-        protected RuntimeDefinedParameterDictionary _runtimeDefinedParameterDictionary;
+        protected Template Template;
+        protected RuntimeDefinedParameterDictionary RuntimeDefinedParameterDictionary;
 
-        protected bool isVerbose;
+        protected bool IsVerbose;
 
         public virtual  object GetDynamicParameters()
         {
-            isVerbose = MyInvocation.BoundParameters.ContainsKey("Verbose") &&
+            IsVerbose = MyInvocation.BoundParameters.ContainsKey("Verbose") &&
                         ((SwitchParameter) MyInvocation.BoundParameters["Verbose"]).ToBool();
 
             try
@@ -51,19 +51,19 @@ namespace StringTemplateCmdlet
                     if (path.EndsWith(TemplateGroup.GroupFileExtension, StringComparison.InvariantCultureIgnoreCase))
                     templateGroup = new TemplateGroupFile(path, Encoding.UTF8, DelimiterStartChar, DelimiterStopChar)
                     {
-                        Verbose = isVerbose,
+                        Verbose = IsVerbose,
                         Logger = Host.UI.WriteVerboseLine
                     };
                     else
                         templateGroup = new TemplateGroupDirectory(path, Encoding.UTF8, DelimiterStartChar, DelimiterStopChar)
                         {
-                            Verbose = isVerbose,
+                            Verbose = IsVerbose,
                             Logger = Host.UI.WriteVerboseLine
                         };
 
-                    _template = templateGroup.GetInstanceOf(TemplateName);
+                    Template = templateGroup.GetInstanceOf(TemplateName);
                     var paramDictionary = new RuntimeDefinedParameterDictionary();
-                    var attr = _template?.GetAttributes();
+                    var attr = Template?.GetAttributes();
                     if (attr != null)
                     {
                         var m = string.Format("top level attributes: {0}", string.Join(", ", attr.Keys));
@@ -71,12 +71,16 @@ namespace StringTemplateCmdlet
                         Host.UI.WriteVerboseLine(m);
                         foreach (var key in attr.Keys)
                         {
-                            var attribute = new ParameterAttribute();
+                            var attribute = new ParameterAttribute
+                            {
+                                ValueFromPipeline = true,
+                                ValueFromPipelineByPropertyName = true
+                            };
                             var attributeCollection = new Collection<System.Attribute> {attribute};
                             var param = new RuntimeDefinedParameter(key, typeof(object), attributeCollection);
                             paramDictionary.Add(key, param);
                         }
-                        _runtimeDefinedParameterDictionary = paramDictionary;
+                        RuntimeDefinedParameterDictionary = paramDictionary;
                     }
                     else
                     {
@@ -96,7 +100,7 @@ namespace StringTemplateCmdlet
 
         private void Dump(string  key, object data)
         {
-            if(!isVerbose) 
+            if(!IsVerbose) 
                 return;
 
             var e = data as IEnumerable;

@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
@@ -17,74 +19,57 @@ namespace StringTemplateCmdlet
     [Cmdlet(VerbsData.Convert, "StTemplate")]
     public class ConvertStTemplate : BaseStTemplate
     {
-        [Parameter(ValueFromPipeline = true, HelpMessage = "specifies the input objects.")]
-        public PSObject InputObject { get; set; }
-
         [Parameter(HelpMessage = "show visualizer.")]
         public SwitchParameter Visualize { get; set; } = false;
 
-        private Collection<PSObject> _pipelineObjects;
-
         protected override void BeginProcessing()
         {
-            _pipelineObjects = new Collection<PSObject>();
+            if (Template == null)
+                Template = new Template(TemplateString, DelimiterStartChar, DelimiterStopChar);
+
+            Template.Group.RegisterModelAdaptor(typeof(PSObject), new PSObjectModelAdaptor { WriteVerbose = WriteVerbose });
+            Template.Group.RegisterRenderer(typeof(string), new JsonRenderer());
+            //            _template.Group.RegisterRenderer(typeof(bool), new JsonRenderer());
         }
 
         protected override void ProcessRecord()
         {
-            if (InputObject != null)
-                _pipelineObjects.Add(InputObject);
-        }
-
-        protected override void EndProcessing()
-        {
-            if (_template == null)
-                _template = new Template(TemplateString, DelimiterStartChar, DelimiterStopChar);
-
-            _template.Group.RegisterModelAdaptor(typeof(PSObject), new PSObjectModelAdaptor {WriteVerbose = WriteVerbose});
-            _template.Group.RegisterRenderer(typeof(string), new JsonRenderer());
-//            _template.Group.RegisterRenderer(typeof(bool), new JsonRenderer());
-
-            if (_runtimeDefinedParameterDictionary != null)
+            var template = Template.CreateShadow();
+            if (RuntimeDefinedParameterDictionary != null)
             {
                 // The value specified by the dynamic parameter is used.
                 // Others set what comes from the pipeline.
-                foreach (var key in _runtimeDefinedParameterDictionary.Keys)
+                foreach (var key in RuntimeDefinedParameterDictionary.Keys)
                 {
-                    var param = _runtimeDefinedParameterDictionary[key];
-                    if (param.Value == null && _pipelineObjects.Any())
+                    var param = RuntimeDefinedParameterDictionary[key];
+                    if (param.Value != null)
                     {
-                        Dump(key, _pipelineObjects);
-                        _template.Add(key, _pipelineObjects);
-                    }
-                    else
-                    {
-                        if (param.Value != null)
-                        {
-                            Dump(key, param.Value);
-                            _template.Add(key, param.Value);
-                        }
+                        Dump("ProcessRecord: ", key, param.Value);
+                        template.Add(key, param.Value);
                     }
                 }
             }
             if (Visualize)
             {
-                _template.Visualize();
+                template.Visualize();
             }
             else
             {
-                WriteObject(_template.Render());
+                WriteObject(template.Render());
             }
-            _pipelineObjects.Clear();
         }
-        private void Dump(string  key, object data)
+
+        protected override void EndProcessing()
         {
-            if(!isVerbose) 
+        }
+        private void Dump(string message, string  key, object data)
+        {
+            if(!IsVerbose) 
                 return;
 
             var e = data as IEnumerable;
             var sb= new StringBuilder();
-            sb.AppendFormat("Attribute:{0}, Type: ", key);
+            sb.AppendFormat("{0} Attribute:{1}, Type: ", message, key);
             sb.AppendLine(
                 e != null ?
                 string.Join(", ", e.Cast<object>().Select(o => o.GetType().Name)) : 
