@@ -1,11 +1,12 @@
-﻿parameters(parameters) ::= <<
-"parameters": { <parameters: { p|
-    "<p.name>": {
-      "type": "<p.type>",
-      "metadata": {
-        "description": "<p.description>"
-      }
-    }
-  };separator=",">
+﻿parameters_x(config) ::= <<
+"parameters": {
+<config: { p|
+  <p.name;format="json-encode"> : {
+    "defaultValue": <p.defaultValue;format="json-encode">,
+    "type": <p.type;format="json-encode">,
+    "metadata":
+      <curlybrace("description", p.metadata.description)>
+  }
+};separator=",">
 }
 >>

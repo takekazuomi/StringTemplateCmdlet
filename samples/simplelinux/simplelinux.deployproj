@@ -32,7 +32,10 @@
     </None>
     <Content Include="Deploy-AzureResourceGroup.ps1" />
     <Content Include="README.md" />
+    <None Include="st\main.st" />
     <None Include="st\parameters.st" />
+    <None Include="template.json" />
+    <None Include="Template.Tests.ps1" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>

@@ -1,0 +1,35 @@
+﻿group parameters;
+
+parameters(parameters) ::= <<
+"parameters": {
+  <parameters:{p|
+    <parameter(p);separator=",">
+  }>
+}
+>>
+
+parameter(parameter) ::= <<
+<parameter.name>: {
+    "defaultValue": <parameter.name;format="json-encode">,
+    "type": <parameter.type;format="json-encode">
+    <parameter.allowedValues:allowedValues()>
+    "metadata": {
+      <metadata(parameter.metadata);format="json-encode">
+    }  
+}
+>>
+
+metadata(metadata) ::= <%
+<metadata.keys:{k|
+<metadata.(k):{v|<k;format="json-encode">: <v;format="json-encode">};separator=",">};separator=",">
+%>
+
+allowedValues(allowedValues) ::= <<
+[
+  <allowedValues;format="json-encode", separator=",">
+],
+>>
+
+debug(parameters) ::= <<
+<parameters.type>
+>>

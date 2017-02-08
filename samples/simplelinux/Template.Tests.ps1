@@ -1,23 +1,54 @@
-Import-Module "$PSScriptRoot/../azure-ssh" -Force
+Import-Module "$PSScriptRoot/../../StringTemplateCmdlet" -Force -Verbose
 
 Set-StrictMode -Version Latest
 
-Describe "vmaccess" {
-    Context "Parameters" {
-        It "Change Password Validation Only" {
-            $result = Set-AzVMUserCredentials -ValidationOnly -ResourceGroupName kinmugiubt02 -VMName kinmugiubt02 -User "takekazu.omi" -Password "0575yR18]~t7T997Epbp#!DujDWUTW" -Verbose
-            $result
-        }
+Describe "arm template parameters module" {
+    It "simple many" {
+        # array of hash
+        $parameters = @(
+            [ordered]@{
+                name = "hostname"
+                defaultValue = "test.example.com"
+                type=[string]"string"
+                metadata = @{
+                    description = "Unique DNS Name for the Public IP used to access the Virtual Machine."
+                }
+            }
+        )
+ 
+        $result = $parameters | Convert-StTemplate -GroupPath $PSScriptRoot/st/parameters.stg -TemplateName parameters -Verbose
+        Write-Host "result:" $result
+    }
 
-        It "Change Password" {
-            $result = Set-AzVMUserCredentials -ResourceGroupName kinmugiubt02 -VMName kinmugiubt02 -User "takekazu.omi" -Password "0575yR18]~t7T997Epbp#!DujDWUTW" -Verbose
-            $result
-        }
+    It "debug" {
+        $parameters = [ordered]@{yype="string"}
+        $result = $parameters | Convert-StTemplate -GroupPath $PSScriptRoot/st/parameters.stg -TemplateName debug -Verbose
+        Write-Host "result:" $result
+ 
+    }
 
-        It "new user and key auth" {
-            $pubid = Get-Content (join-path (split-path (Get-SshPath) -parent) "id_rsa.pub")
-            $result = Set-AzVMUserCredentials -ResourceGroupName kinmugiubt02 -VMName kinmugiubt02 -User "takekazu.omi3" -SshKey "$pubid" -Verbose
-            $result
-        }
+    It "simple many" {
+
+    }
+
+    It "secure string" {
+    }
+
+    It "selection" {
+    }
+
+    It "default selection" {
+    }
+
+    It "meta data" {
+    }
+}
+
+Describe "debug" {
+    It "debug type" {
+        $parameters = @{type="string"}
+        $result = $parameters | Convert-StTemplate -GroupPath $PSScriptRoot/st/parameters.stg -TemplateName debug -Verbose
+#        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/parameters.stg -TemplateName debug  -parameters $parameters -Verbose
+        Write-Host "result:" $result
     }
 }
