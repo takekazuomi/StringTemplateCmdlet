@@ -1,0 +1,12 @@
+﻿group variables;
+
+variables(variables) ::= <<
+"variables": {
+  <variables:properties()>
+}
+>>
+
+properties(properties) ::= <<
+<properties.keys:{k|
+<properties.(k):{v|<k;format="json-encode">: <v;format="json-encode">};separator=",">};separator=",">
+>>
