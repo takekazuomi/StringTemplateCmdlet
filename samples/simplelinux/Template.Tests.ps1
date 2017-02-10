@@ -64,22 +64,6 @@ Describe -Tag "variables" "arm template variables module" {
         $result = $variables | Convert-StTemplate -GroupPath $PSScriptRoot/st/variables.stg -TemplateName variables
         Write-Host "result:" $result
     }
-
-    It "simple many" {
-
-    }
-
-    It "secure string" {
-    }
-
-    It "selection" {
-    }
-
-    It "default selection" {
-    }
-
-    It "meta data" {
-    }
 }
 
 Describe  "debugByPipe" {

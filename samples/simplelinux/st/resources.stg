@@ -1,1 +1,28 @@
 ﻿group resources;
+
+simple_value(key, value) := <<
+<key;format="json-encode">>: <value;format="json-encode">>
+>>
+
+hash_value(key, value) := <<
+<key;format="json-encode">>: {
+  <value:properties()>
+}
+>>
+
+array_value(key, value) := <<
+<key>: [
+  <value:properties()>
+]
+>>
+
+array_hash_value(key, value) := <<
+<key>: [
+  <value:hash_value()>
+]
+>>
+
+properties(properties) ::= <<
+<properties.keys:{k|
+<properties.(k):{v|<k;format="json-encode">: <v;format="json-encode">};separator=",">};separator=",">
+>>
