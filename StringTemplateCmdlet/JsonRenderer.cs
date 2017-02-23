@@ -80,7 +80,7 @@ namespace StringTemplateCmdlet
             else if (o is int || o is long)
                 v = o.ToString();
             else
-                v = HttpUtility.JavaScriptStringEncode(o.ToString(), true).Replace("\\u0027", "'");
+                v = HttpUtility.JavaScriptStringEncode(o.ToString(), true).Replace("\\u0027", "'").Replace("\\u0026", "&");
             return v;
         }
     }

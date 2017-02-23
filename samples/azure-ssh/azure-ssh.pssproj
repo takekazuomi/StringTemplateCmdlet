@@ -37,6 +37,7 @@
     <Compile Include="azure-ssh.psd1" />
     <Compile Include="azure-ssh.psm1" />
     <Compile Include="azure-ssh.Tests.ps1" />
+    <Compile Include="CustomScript.ps1" />
     <Compile Include="VMAccess.ps1" />
     <Compile Include="st\rdpfile.stg" />
     <Compile Include="st\sshconfig.stg" />
@@ -47,6 +48,7 @@
     <Folder Include="st\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="st\customscript.stg" />
     <Content Include="st\vmaccess.stg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
