@@ -38,6 +38,7 @@
     <Compile Include="azure-ssh.psm1" />
     <Compile Include="azure-ssh.Tests.ps1" />
     <Compile Include="CustomScript.ps1" />
+    <Compile Include="st\keylist.stg" />
     <Compile Include="VMAccess.ps1" />
     <Compile Include="st\rdpfile.stg" />
     <Compile Include="st\sshconfig.stg" />

@@ -22,13 +22,21 @@ namespace StringTemplateCmdlet
         [Parameter(HelpMessage = "show visualizer.")]
         public SwitchParameter Visualize { get; set; } = false;
 
+        [Parameter(HelpMessage = "json mode.")]
+        public SwitchParameter Json { get; set; } = false;
+
+
+
         protected override void BeginProcessing()
         {
             if (Template == null)
                 Template = new Template(TemplateString, DelimiterStartChar, DelimiterStopChar);
 
             Template.Group.RegisterModelAdaptor(typeof(PSObject), new PSObjectModelAdaptor { WriteVerbose = WriteVerbose });
-            Template.Group.RegisterRenderer(typeof(string), new JsonRenderer());
+            if (Json)
+                Template.Group.RegisterRenderer(typeof(string), new DefaultJsonRenderer());
+            else
+                Template.Group.RegisterRenderer(typeof(string), new JsonRenderer());
             //            _template.Group.RegisterRenderer(typeof(bool), new JsonRenderer());
         }
 

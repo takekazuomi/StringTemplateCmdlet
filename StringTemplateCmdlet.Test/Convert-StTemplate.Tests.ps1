@@ -26,6 +26,16 @@ Describe -Tag "simple-parameter" "simple parameter test" {
     }
 }
 
+Describe -Tag "simple-json" "simple json option test" {
+    Context "Context json quote helloworld.st" {
+        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st -TemplateName helloworld -name "Posh" -Json
+
+        It "Hello Posh" {
+            (-join $result) | Should Be "Hello `"Posh`""
+        }
+    }
+}
+
 Describe -Tag "simple-pipe" "simple pipe test" {
     Context "Context template helloworld.st" {
         $result = "Posh" | Convert-StTemplate -GroupPath $PSScriptRoot/st -TemplateName helloworld

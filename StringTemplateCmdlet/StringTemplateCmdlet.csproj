@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="BaseStTemplate.cs" />
     <Compile Include="ConvertStTemplate.cs" />
+    <Compile Include="DefaultJsonRenderer.cs" />
     <Compile Include="JsonRenderer.cs" />
     <Compile Include="MapModelAdaptorWrapper.cs" />
     <Compile Include="NewStGroup.cs" />
@@ -57,6 +58,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="StringTemplateCmdlet.psd1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="StringTemplateCmdlet.psm1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\antlrcs\Antlr4.StringTemplate.Visualizer\Antlr4.StringTemplate.Visualizer.net35-client.csproj">

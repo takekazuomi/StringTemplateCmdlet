@@ -14,7 +14,7 @@ function getSshConfig {
 
     $vm = Get-AzureRmVM -ResourceGroupName $RsourceGroupName -Name $Name
     $nicId = ($vm.NetworkProfile.NetworkInterfaces | Select-Object -First 1).Id
-    
+
     $nic = Get-AzureRmResource -ResourceId $nicId
 
     $pipId = $nic.Properties.ipConfigurations | Select-Object -First 1 | ?{$_.properties.publicIPAddress} | %{$_.properties.publicIPAddress.Id}
@@ -82,7 +82,7 @@ function Get-AzSshJumpboxConfig {
         $localForward = [list[hashtable]]@()
         $localForwardHost = [list[hashtable]]@()
     }
-    
+
     Process {
         if($VM.Name -ne $name) {
             $nicId = ($vm.NetworkProfile.NetworkInterfaces | Select-Object -First 1).Id
@@ -121,13 +121,13 @@ function Get-AzSshJumpboxConfig {
     }
 
     End {
-        $config.Properties["LocalForward"]=$localForward 
+        $config.Properties["LocalForward"]=$localForward
         $hosts = [list[hashtable]]@()
         $hosts.Add($config)
         $hosts.AddRange($localForwardHost)
 
         $result = $hosts | Convert-StTemplate -GroupPath $PSScriptRoot/st/sshconfig.stg -TemplateName host
-        $result | Out-File -Encoding ascii -FilePath (Join-Path $Path "${Name}_ssh.config") -Force
+        $result | Out-File -Encoding ascii -FilePath (Join-Path $Path "ssh_${Name}.config") -Force
     }
 }
 

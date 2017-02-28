@@ -39,10 +39,10 @@ using CultureInfo = System.Globalization.CultureInfo;
 
 namespace StringTemplateCmdlet
 {
-    public sealed class JsonRenderer : IAttributeRenderer
+    public class JsonRenderer : IAttributeRenderer
     {
         // trim(s) and strlen(s) built-in funcs; these are Format options
-        public string ToString(object o, string formatString, CultureInfo culture)
+        public virtual string ToString(object o, string formatString, CultureInfo culture)
         {
             string s = (string)o;
             if (formatString == null)
@@ -58,7 +58,7 @@ namespace StringTemplateCmdlet
                 return s.Length > 0 ? culture.TextInfo.ToUpper(s[0]) + s.Substring(1) : s;
 
             if (formatString.Equals("json-encode"))
-                return JsonToString(o, formatString);
+                return JsonToString(o);
 
             if (formatString.Equals("url-encode"))
                 return HttpUtility.UrlEncode(s, Encoding.UTF8);
@@ -71,7 +71,7 @@ namespace StringTemplateCmdlet
             return string.Format(culture, formatString, s);
         }
 
-        private string JsonToString(object o, string formatString)
+        protected string JsonToString(object o)
         {
             string v;
 
