@@ -2,5 +2,5 @@
 
 rdpfile(host, port) ::= <<
 full address:s:<host>:<port>
-prompt for credentials:i:0
+prompt for credentials:i:1
 >>

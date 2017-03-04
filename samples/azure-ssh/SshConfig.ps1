@@ -7,7 +7,8 @@ function getSshConfig {
         [string]$RsourceGroupName,
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        [string]$IdentityFile="~/.sshd/id_rsa"
+        [string]$IdentityFile="~/.sshd/id_rsa",
+        [string]$PasswordAuthentication="no"
     )
 
     # https://github.com/Azure/azure-powershell/blob/master/src/ResourceManager/Compute/Commands.Compute/RemoteDesktop/GetAzureRemoteDesktopFileCommand.cs#L99
@@ -34,10 +35,7 @@ function getSshConfig {
         Host = $Name
         Properties = [ordered]@{
             HostName = (?? $fqdn $ipaddress $ipaddress)
-            ServerAliveInterval = 60
-            UserKnownHostsFile="/dev/null"
-            StrictHostKeyChecking = "no"
-            PasswordAuthentication = "no"
+            PasswordAuthentication = $PasswordAuthentication
             IdentityFile = $IdentityFile
             LogLevel = "FATAL"
         }
@@ -52,10 +50,11 @@ function Get-AzSshConfig {
         [string]$ResourceGroupName,
         [Parameter(Mandatory=$true)]
         [string]$Name,
-        [string]$IdentityFile="~/.sshd/id_rsa"
+        [string]$IdentityFile="~/.sshd/id_rsa",
+        [string]$PasswordAuthentication="no"
     )
 
-    $config = getSshConfig $ResourceGroupName $Name $IdentityFile
+    $config = getSshConfig $ResourceGroupName $Name $IdentityFile $PasswordAuthentication
 
     $result = $config | Convert-StTemplate -GroupPath $PSScriptRoot/st/sshconfig.stg -TemplateName host
     $result
@@ -73,11 +72,13 @@ function Get-AzSshJumpboxConfig {
         [Parameter(ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true, Mandatory=$true)]
         #[Microsoft.Azure.Commands.Compute.Models.PSVirtualMachine]$VM,
         [object]$VM,
-        [string]$IdentityFile="~/.sshd/id_rsa"
+        [string]$IdentityFile="~/.sshd/id_rsa",
+        [ValidateSet("yes","no")]
+        [string]$PasswordAuthentication="no"
     )
 
     begin {
-        $config = getSshConfig $ResourceGroupName $Name $IdentityFile
+        $config = getSshConfig $ResourceGroupName $Name $IdentityFile $PasswordAuthentication
         $localPort=8000
         $localForward = [list[hashtable]]@()
         $localForwardHost = [list[hashtable]]@()
@@ -105,12 +106,8 @@ function Get-AzSshJumpboxConfig {
                     Properties = [ordered]@{
                         HostName = "localhost"
                         Port = ${localPort}
-                        ServerAliveInterval = 60
-                        UserKnownHostsFile="/dev/null"
-                        StrictHostKeyChecking = "no"
-                        PasswordAuthentication = "no"
+                        PasswordAuthentication = $PasswordAuthentication
                         IdentityFile = $IdentityFile
-                        LogLevel = "FATAL"
                     }
                 }
                 $localForwardHost.Add($config)
@@ -126,7 +123,7 @@ function Get-AzSshJumpboxConfig {
         $hosts.Add($config)
         $hosts.AddRange($localForwardHost)
 
-        $result = $hosts | Convert-StTemplate -GroupPath $PSScriptRoot/st/sshconfig.stg -TemplateName host
+        $result = Convert-StTemplate -GroupPath $PSScriptRoot/st/sshconfig.stg -TemplateName host -config  $hosts
         $result | Out-File -Encoding ascii -FilePath (Join-Path $Path "ssh_${Name}.config") -Force
     }
 }

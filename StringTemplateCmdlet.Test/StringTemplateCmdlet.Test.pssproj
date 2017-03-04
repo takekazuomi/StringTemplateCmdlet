@@ -30,7 +30,7 @@
     <Folder Include="st\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ShhConfig.Tests.ps1" />
+    <Compile Include="SshConfig.Tests.ps1" />
     <Compile Include="Convert-StTemplate.Tests.ps1" />
     <Compile Include="st\message.st" />
   </ItemGroup>

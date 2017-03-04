@@ -1,6 +1,14 @@
 ﻿group sshconfig;
 
 host(config) ::= <<
+Host *
+    ServerAliveInterval 60
+    UserKnownHostsFile /dev/null
+    StrictHostKeyChecking yes
+    PasswordAuthentication yes
+    IdentityFile ~/.sshd/id_rsa
+    LogLevel FATAL
+
 <config:{c|
 Host <c.Host>
   <properties(c.Properties)>

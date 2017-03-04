@@ -37,6 +37,7 @@
     <Compile Include="azure-ssh.psd1" />
     <Compile Include="azure-ssh.psm1" />
     <Compile Include="azure-ssh.Tests.ps1" />
+    <Compile Include="Cms.ps1" />
     <Compile Include="CustomScript.ps1" />
     <Compile Include="st\keylist.stg" />
     <Compile Include="VMAccess.ps1" />
@@ -47,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="st\" />
+    <Folder Include="tmp\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="st\customscript.stg" />
